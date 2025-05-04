@@ -1,0 +1,13 @@
+minigame/target/minigame-1.0.jar
+minigame/target/classes/config.yml
+minigame/target/classes/plugin.yml
+minigame/target/classes/com/thomas/minigame/GameManager.class
+minigame/target/classes/com/thomas/minigame/GameManager$1.class
+minigame/target/classes/com/thomas/minigame/GameManager$2.class
+minigame/target/classes/com/thomas/minigame/GameManager$2$1.class
+minigame/target/classes/com/thomas/minigame/MinigamePlugin.class
+minigame/target/classes/com/thomas/minigame/SQLManager.class
+minigame/target/maven-archiver/pom.properties
+minigame/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+minigame/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+minigame/src/main/resources/config.yml
