@@ -19,6 +19,8 @@ public class MinigamePlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(gameManager, this);
         getLogger().info("MinigamePlugin enabled.");
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
     }
 
     public static MinigamePlugin getInstance() {
