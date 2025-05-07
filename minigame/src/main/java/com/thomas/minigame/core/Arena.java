@@ -13,41 +13,81 @@ public abstract class Arena {
     private final String name;
     private final Location spawnLocation;
     private final Set<PlayerData> players = new HashSet<>();
-    private Game game;
+    private Game game; // This is the single source of truth for the current game
 
     public Arena(String name, double x, double y, double z) {
         this.name = name;
-        World world = Bukkit.getWorld("world"); // You can improve this later
-        this.spawnLocation = new Location(world, x, y, z);
+        World world = Bukkit.getWorld("world"); // Consider making world configurable or passed in
+        if (world == null) {
+            Bukkit.getLogger()
+                    .severe("Failed to find world 'world' for arena " + name + ". Spawn location will be invalid.");
+            // Handle this error appropriately, maybe throw an exception or use a default
+            // spawn
+            this.spawnLocation = null; // Or some default
+        } else {
+            this.spawnLocation = new Location(world, x, y, z);
+        }
     }
 
     public void addPlayer(Player player) {
+        if (spawnLocation == null) {
+            player.sendMessage("Arena " + name + " is not properly configured (spawn location missing).");
+            Bukkit.getLogger()
+                    .warning("Cannot add player " + player.getName() + " to arena " + name + " due to missing spawn.");
+            return;
+        }
         PlayerData data = new PlayerData(player);
         players.add(data);
         player.teleport(spawnLocation);
-        sendMessage(player.getName() + " joined " + name + "!");
         checkStart();
     }
 
     public void removePlayer(Player player) {
         players.removeIf(p -> p.getPlayer().equals(player));
+        // Optional: If player removal should affect game state (e.g., end game if too
+        // few players)
+        // if (game != null && game.isActive()) {
+        // game.checkPlayerCount(); // Example method
+        // }
     }
 
+    public abstract void startGame(); // To be implemented by subclasses like TNTTagArena
+
     protected void checkStart() {
-        if (players.size() >= 2 && game == null) {
-            startGame(); // Call subclass-implemented method
+        // Ensure there are enough players (>= 2) and no game has been started yet
+        if (players.size() >= 2 && this.game == null) {
+            Bukkit.getLogger().info("[Arena " + name + "] checkStart: Conditions met. Calling startGame().");
+            startGame(); // This will call the subclass's implementation
+        } else {
+            if (players.size() < 2) {
+                Bukkit.getLogger().info("[Arena " + name + "] checkStart: Not enough players (" + players.size()
+                        + "). Need at least 2.");
+            }
+            if (this.game != null) {
+                Bukkit.getLogger().info("[Arena " + name + "] checkStart: Game already exists.");
+            }
         }
     }
 
     public void endGame() {
-        if (game != null) {
-            game.stop();
-            game = null;
+        Bukkit.getLogger().info("[Arena " + name + "] endGame called.");
+        if (this.game != null) {
+            this.game.stop(); // Ensure your Game objects have a stop() method
+            this.setGame(null); // Use the setter to clear the game
+        } else {
+            Bukkit.getLogger().info("[Arena " + name + "] endGame called, but no game was running.");
         }
     }
 
     public boolean isRunning() {
-        return game != null;
+        // A game is running if the game object exists AND that game considers itself
+        // active.
+        boolean running = this.game != null && this.game.isActive();
+        // Optional: finer logging for debugging, can be removed or set to a lower log
+        // level
+        Bukkit.getLogger().finest("[Arena " + name + "] isRunning() check: " + running +
+                (this.game == null ? " (Game object is null)" : " (Game active: " + this.game.isActive() + ")"));
+        return running;
     }
 
     public Set<PlayerData> getPlayers() {
@@ -63,12 +103,20 @@ public abstract class Arena {
     }
 
     public Game getGame() {
-        return game;
+        return this.game;
+    }
+
+    // Setter for the game, to be used by subclasses in their startGame()
+    public void setGame(Game game) {
+        this.game = game;
+        if (game != null) {
+            Bukkit.getLogger().info("[Arena " + name + "] Game instance set to: " + game.getClass().getSimpleName());
+        } else {
+            Bukkit.getLogger().info("[Arena " + name + "] Game instance set to null.");
+        }
     }
 
     public Location getSpawnLocation() {
         return spawnLocation;
     }
-
-    public abstract void startGame();
 }

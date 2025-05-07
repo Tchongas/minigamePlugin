@@ -4,6 +4,8 @@ import com.thomas.minigame.core.Arena;
 import com.thomas.minigame.core.Game;
 import com.thomas.minigame.core.GameManager;
 import com.thomas.minigame.MinigamesPlugin;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,22 +21,29 @@ public class TNTTagListener implements Listener {
         Player damager = (Player) event.getDamager();
         Player victim = (Player) event.getEntity();
 
+        Bukkit.getLogger().info("onTag triggered: " + damager.getName() + " hit " + victim.getName());
+
         GameManager manager = MinigamesPlugin.getInstance().getGameManager();
 
         for (Arena arena : manager.getArenas()) {
-            if (!arena.isRunning())
+            Bukkit.getLogger().info("Checking arena: " + arena.getName());
+            if (!arena.isRunning()) {
+                Bukkit.getLogger().info("Arena not running: " + arena.getName());
                 continue;
+            }
 
             boolean damagerInArena = arena.getPlayers().stream()
                     .anyMatch(p -> p.getPlayer().equals(damager));
 
             if (damagerInArena) {
+                Bukkit.getLogger().info("Damager is in arena: " + arena.getName());
                 Game game = arena.getGame();
+
                 if (game instanceof TNTTagGame tagGame) {
                     tagGame.onPlayerHit(damager, victim);
-                    event.setCancelled(true); // Prevent real damage
+                } else {
                 }
-                break; // No need to check other arenas
+                break;
             }
         }
     }

@@ -1,5 +1,8 @@
 package com.thomas.minigame.games.tnttag;
 
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
 import com.thomas.minigame.core.PlayerData;
 
 public class TNTTagPlayer extends PlayerData {
@@ -16,12 +19,14 @@ public class TNTTagPlayer extends PlayerData {
 
     public void setTagged(boolean tagged) {
         this.isTagged = tagged;
-        getPlayer().getInventory().clear();
+
         if (tagged) {
-            getPlayer().getInventory().setHelmet(new org.bukkit.inventory.ItemStack(org.bukkit.Material.TNT));
-            getPlayer().sendMessage("You are TAGGED! Hit someone to pass it!");
+            getPlayer().getInventory().clear(); // Only clear when tagging
+            getPlayer().getInventory().setHelmet(new ItemStack(Material.TNT));
+            getPlayer().sendMessage("Voce esta com a Batata Quente! Bata em alguem para passar ela!");
         } else {
-            getPlayer().sendMessage("You are no longer tagged.");
+            getPlayer().getInventory().setHelmet(null); // Remove TNT helmet
         }
     }
+
 }

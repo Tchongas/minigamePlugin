@@ -14,14 +14,14 @@ public class MinigamesPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Register TNT Tag events
+        getServer().getPluginManager().registerEvents(new TNTTagListener(), this);
         instance = this;
 
         this.gameManager = new GameManager();
         gameManager.init();
 
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
-        // Register TNT Tag events
-        Bukkit.getPluginManager().registerEvents(new TNTTagListener(), this);
 
         getLogger().info("Minigames plugin enabled!");
     }
