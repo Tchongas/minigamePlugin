@@ -21,7 +21,6 @@ public class Game {
      */
     public void start() {
         this.active = true;
-        arena.sendMessage("Jogo começando...");
         Bukkit.getLogger().info("Game [" + this.getClass().getSimpleName() + "] in Arena [" + arena.getName()
                 + "] has been set to active.");
     }

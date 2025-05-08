@@ -1,9 +1,15 @@
 package com.thomas.minigame.core;
 
+import com.thomas.minigame.MinigamesPlugin;
 import com.thomas.minigame.games.tnttag.TNTTagArena;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.bukkit.entity.Player;
 
 public class GameManager {
 
@@ -31,5 +37,20 @@ public class GameManager {
 
     public List<Arena> getArenas() {
         return arenas;
+    }
+
+    public void sendToServer(Player player, String serverName) {
+        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(byteArray);
+
+        try {
+            out.writeUTF("Connect");
+            out.writeUTF(serverName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        player.sendPluginMessage(MinigamesPlugin.getInstance(), "velocity:player", byteArray.toByteArray());
     }
 }

@@ -38,17 +38,12 @@ public abstract class Arena {
         }
         PlayerData data = new PlayerData(player);
         players.add(data);
-        player.teleport(spawnLocation);
         checkStart();
     }
 
     public void removePlayer(Player player) {
         players.removeIf(p -> p.getPlayer().equals(player));
-        // Optional: If player removal should affect game state (e.g., end game if too
-        // few players)
-        // if (game != null && game.isActive()) {
-        // game.checkPlayerCount(); // Example method
-        // }
+        // Fazer testar se so tem 1 player, se tiver fazer ganhar
     }
 
     public abstract void startGame(); // To be implemented by subclasses like TNTTagArena

@@ -21,9 +21,8 @@ public class TNTTagPlayer extends PlayerData {
         this.isTagged = tagged;
 
         if (tagged) {
-            getPlayer().getInventory().clear(); // Only clear when tagging
             getPlayer().getInventory().setHelmet(new ItemStack(Material.TNT));
-            getPlayer().sendMessage("Voce esta com a Batata Quente! Bata em alguem para passar ela!");
+            getPlayer().sendMessage("Voce esta com a Batata Quente!");
         } else {
             getPlayer().getInventory().setHelmet(null); // Remove TNT helmet
         }

@@ -14,6 +14,7 @@ public class MinigamesPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "velocity:player");
         // Register TNT Tag events
         getServer().getPluginManager().registerEvents(new TNTTagListener(), this);
         instance = this;
