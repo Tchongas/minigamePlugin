@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 public class TNTTagListener implements Listener {
 
@@ -45,6 +46,13 @@ public class TNTTagListener implements Listener {
                 }
                 break;
             }
+        }
+    }
+
+    @EventHandler
+    public void onFallDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            event.setCancelled(true);
         }
     }
 }

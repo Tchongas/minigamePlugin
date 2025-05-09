@@ -7,15 +7,18 @@ import com.thomas.minigame.util.Countdown; // Assuming Countdown is well-defined
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask; // For storing the task
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -41,14 +44,22 @@ public class TNTTagGame extends Game {
             Location spawnLocation = arena.getSpawnLocation();
             if (player != null && player.isOnline()) {
                 activePlayers.add(new TNTTagPlayer(player));
-                // Prepare player for game (e.g., clear inventory, set gamemode, heal)
-                player.setGameMode(GameMode.ADVENTURE); // Or Adventure
+                // PREPARE PLAYER
+                player.setGameMode(GameMode.ADVENTURE);
                 player.getInventory().clear();
+
+                String cmd = String.format(
+                        "give %s white_wool[minecraft:can_place_on={}] 64",
+                        player.getName());
+                String cmd2 = String.format(
+                        "give iLoveHotFurries minecraft:shears[minecraft:can_break={blocks:[white_wool]},minecraft:unbreakable={},enchantments={\"minecraft:efficiency\":5},minecraft:can_place_on={}]",
+                        player.getName());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd2);
 
                 ItemStack windCharge = new ItemStack(Material.WIND_CHARGE, 64);
                 player.getInventory().addItem(windCharge);
                 player.setHealth(player.getMaxHealth());
-                player.setFallDistance(20);
                 player.setFoodLevel(20);
                 player.teleport(spawnLocation);
             }
@@ -62,8 +73,8 @@ public class TNTTagGame extends Game {
             return;
         }
 
-        arena.sendMessage("§aBatata Quente vai começar em 10 segundos!");
-        new Countdown(10, // Countdown duration
+        arena.sendMessage("§aBatata Quente vai começar em 20 segundos!");
+        new Countdown(20, // Countdown duration
                 secondsLeft -> arena.sendMessage("§eJogo começando em " + secondsLeft + "s..."),
                 this::beginActualGameLogic // Method to call when countdown finishes
         ).start(); // Pass plugin instance to Countdown if it needs it for scheduling
@@ -144,11 +155,8 @@ public class TNTTagGame extends Game {
             taggedPlayer.setTagged(false); // Untag the old player
             victimAsTNTTagPlayer.setTagged(true); // Tag the new player
             taggedPlayer = victimAsTNTTagPlayer; // Update who is currently tagged
-            // arena.sendMessage("§e" + damager.getName() + " tagged " + victim.getName() +
-            // "! §c" + victim.getName()
-            // + " is now IT!");
         } else if (victimAsTNTTagPlayer == taggedPlayer) {
-            damager.sendMessage("§e?????");
+
         } else {
         }
     }

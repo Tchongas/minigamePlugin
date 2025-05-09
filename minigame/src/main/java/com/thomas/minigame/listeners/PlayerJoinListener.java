@@ -16,6 +16,8 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null);
         Player player = event.getPlayer();
+        // show players in queue
+        player.sendMessage("Você entrou no Jogo!");
 
         if (Bukkit.getWorld("world") != null) { // Null check for world
             player.teleport(Bukkit.getWorld("world").getSpawnLocation());

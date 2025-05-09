@@ -2,6 +2,7 @@ package com.thomas.minigame;
 
 import com.thomas.minigame.core.GameManager;
 import com.thomas.minigame.games.tnttag.TNTTagListener;
+import com.thomas.minigame.listeners.GameItemProtectionListener;
 import com.thomas.minigame.listeners.PlayerJoinListener;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,12 +18,14 @@ public class MinigamesPlugin extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "velocity:player");
         // Register TNT Tag events
         getServer().getPluginManager().registerEvents(new TNTTagListener(), this);
+
         instance = this;
 
         this.gameManager = new GameManager();
         gameManager.init();
 
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        getServer().getPluginManager().registerEvents(new GameItemProtectionListener(), this);
 
         getLogger().info("Minigames plugin enabled!");
     }
