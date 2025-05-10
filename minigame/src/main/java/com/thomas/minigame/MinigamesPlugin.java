@@ -4,6 +4,7 @@ import com.thomas.minigame.core.GameManager;
 import com.thomas.minigame.games.tnttag.TNTTagListener;
 import com.thomas.minigame.listeners.GameItemProtectionListener;
 import com.thomas.minigame.listeners.PlayerJoinListener;
+import com.thomas.minigame.listeners.WoolBreakerListener;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
@@ -26,6 +27,7 @@ public class MinigamesPlugin extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
         getServer().getPluginManager().registerEvents(new GameItemProtectionListener(), this);
+        getServer().getPluginManager().registerEvents(new WoolBreakerListener(), this);
 
         getLogger().info("Minigames plugin enabled!");
     }

@@ -22,14 +22,10 @@ public class TNTTagListener implements Listener {
         Player damager = (Player) event.getDamager();
         Player victim = (Player) event.getEntity();
 
-        Bukkit.getLogger().info("onTag triggered: " + damager.getName() + " hit " + victim.getName());
-
         GameManager manager = MinigamesPlugin.getInstance().getGameManager();
 
         for (Arena arena : manager.getArenas()) {
-            Bukkit.getLogger().info("Checking arena: " + arena.getName());
             if (!arena.isRunning()) {
-                Bukkit.getLogger().info("Arena not running: " + arena.getName());
                 continue;
             }
 
@@ -37,7 +33,6 @@ public class TNTTagListener implements Listener {
                     .anyMatch(p -> p.getPlayer().equals(damager));
 
             if (damagerInArena) {
-                Bukkit.getLogger().info("Damager is in arena: " + arena.getName());
                 Game game = arena.getGame();
 
                 if (game instanceof TNTTagGame tagGame) {

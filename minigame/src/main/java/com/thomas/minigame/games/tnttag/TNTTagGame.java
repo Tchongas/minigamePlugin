@@ -3,6 +3,7 @@ package com.thomas.minigame.games.tnttag;
 import com.thomas.minigame.MinigamesPlugin; // Assuming this is your main plugin class
 import com.thomas.minigame.core.Arena;
 import com.thomas.minigame.core.Game;
+import com.thomas.minigame.core.PlayerData;
 import com.thomas.minigame.util.Countdown; // Assuming Countdown is well-defined
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,6 +15,8 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask; // For storing the task
 
@@ -52,16 +55,23 @@ public class TNTTagGame extends Game {
                         "give %s white_wool[minecraft:can_place_on={}] 64",
                         player.getName());
                 String cmd2 = String.format(
-                        "give iLoveHotFurries minecraft:shears[minecraft:can_break={blocks:[white_wool]},minecraft:unbreakable={},enchantments={\"minecraft:efficiency\":5},minecraft:can_place_on={}]",
+                        "give %s minecraft:shears[minecraft:can_break={blocks:[white_wool]},minecraft:unbreakable={},enchantments={\"minecraft:efficiency\":5},minecraft:can_place_on={}]",
                         player.getName());
+                String cmd3 = String.format(
+                        "give %s minecraft:ender_pearl[minecraft:use_cooldown={seconds:40}] 16",
+                        player.getName());
+
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd2);
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd3);
 
                 ItemStack windCharge = new ItemStack(Material.WIND_CHARGE, 64);
                 player.getInventory().addItem(windCharge);
                 player.setHealth(player.getMaxHealth());
                 player.setFoodLevel(20);
                 player.teleport(spawnLocation);
+                player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 9999999, 1));
+
             }
         });
 
@@ -82,6 +92,12 @@ public class TNTTagGame extends Game {
 
     private void beginActualGameLogic() {
         arena.sendMessage("§cJogo Começou! CORRA!");
+        for (PlayerData playerData : arena.getPlayers()) {
+            Player player = playerData.getPlayer(); // Assuming getPlayer() returns the Player
+            if (player != null) {
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 1.0f);
+            }
+        }
 
         pickRandomTagged();
 
@@ -171,6 +187,7 @@ public class TNTTagGame extends Game {
 
         if (Bukkit.getWorld("world") != null) { // Null check for world
             bukkitPlayer.teleport(Bukkit.getWorld("world").getSpawnLocation());
+            bukkitPlayer.clearActivePotionEffects();
         } else {
         }
 
@@ -281,6 +298,7 @@ public class TNTTagGame extends Game {
                     if (bukkitPlayer.isOnline()) { // Good practice: check if player is still online
                         if (Bukkit.getWorld("world") != null) {
                             bukkitPlayer.teleport(Bukkit.getWorld("world").getSpawnLocation());
+                            bukkitPlayer.clearActivePotionEffects();
                         } else {
                             Bukkit.getLogger()
                                     .severe("[TNTTagGame] World 'world' not found for player teleport after win!");
@@ -295,6 +313,7 @@ public class TNTTagGame extends Game {
             arena.sendMessage("§aFim de jogo???");
         }
         this.arena.endGame();
+        arena.waitAndRestartGame();
     }
 
     @Override

@@ -4,6 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import com.thomas.minigame.MinigamesPlugin;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -62,6 +65,15 @@ public abstract class Arena {
                 Bukkit.getLogger().info("[Arena " + name + "] checkStart: Game already exists.");
             }
         }
+    }
+
+    public void waitAndRestartGame() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                checkStart();
+            }
+        }.runTaskLater(MinigamesPlugin.getInstance(), 400L); // 20 seconds
     }
 
     public void endGame() {
