@@ -7,6 +7,7 @@ import com.thomas.minigame.MinigamesPlugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -38,6 +39,41 @@ public class TNTTagListener implements Listener {
                 if (game instanceof TNTTagGame tagGame) {
                     tagGame.onPlayerHit(damager, victim);
                 } else {
+                }
+                break;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onTridentTag(EntityDamageByEntityEvent event) {
+        // Only proceed if the damager is a Trident
+        if (!(event.getDamager() instanceof Trident trident))
+            return;
+
+        // Only proceed if the trident hit a player
+        if (!(event.getEntity() instanceof Player victim))
+            return;
+
+        // Only proceed if the shooter is a player
+        if (!(trident.getShooter() instanceof Player damager))
+            return;
+
+        GameManager manager = MinigamesPlugin.getInstance().getGameManager();
+
+        for (Arena arena : manager.getArenas()) {
+            if (!arena.isRunning()) {
+                continue;
+            }
+
+            boolean damagerInArena = arena.getPlayers().stream()
+                    .anyMatch(p -> p.getPlayer().equals(damager));
+
+            if (damagerInArena) {
+                Game game = arena.getGame();
+
+                if (game instanceof TNTTagGame tagGame) {
+                    tagGame.onPlayerHit(damager, victim);
                 }
                 break;
             }

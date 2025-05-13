@@ -84,10 +84,13 @@ public class TNTTagGame extends Game {
         }
 
         arena.sendMessage("§aBatata Quente vai começar em 20 segundos!");
-        new Countdown(20, // Countdown duration
-                secondsLeft -> arena.sendMessage("§eJogo começando em " + secondsLeft + "s..."),
-                this::beginActualGameLogic // Method to call when countdown finishes
-        ).start(); // Pass plugin instance to Countdown if it needs it for scheduling
+        new Countdown(20,
+                secondsLeft -> {
+                    if (secondsLeft == 20 || secondsLeft == 15 || secondsLeft == 10 || secondsLeft <= 5) {
+                        arena.sendMessage("§eJogo começando em " + secondsLeft + "s...");
+                    }
+                },
+                this::beginActualGameLogic).start();
     }
 
     private void beginActualGameLogic() {
