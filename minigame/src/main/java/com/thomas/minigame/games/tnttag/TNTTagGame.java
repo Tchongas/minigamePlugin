@@ -52,7 +52,7 @@ public class TNTTagGame extends Game {
                 player.getInventory().clear();
 
                 String cmd = String.format(
-                        "give %s white_wool[minecraft:can_place_on={}] 64",
+                        "give %s white_wool[minecraft:can_place_on={}] 128",
                         player.getName());
                 String cmd2 = String.format(
                         "give %s minecraft:shears[minecraft:can_break={blocks:[white_wool]},minecraft:unbreakable={},enchantments={\"minecraft:efficiency\":5},minecraft:can_place_on={}]",
@@ -65,7 +65,7 @@ public class TNTTagGame extends Game {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd2);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd3);
 
-                ItemStack windCharge = new ItemStack(Material.WIND_CHARGE, 64);
+                ItemStack windCharge = new ItemStack(Material.WIND_CHARGE, 32);
                 player.getInventory().addItem(windCharge);
                 player.setHealth(player.getMaxHealth());
                 player.setFoodLevel(20);
@@ -125,6 +125,30 @@ public class TNTTagGame extends Game {
                     } else {
                         // Start countdown for next tag
                         arena.sendMessage("§6A nova Batata Quente vai aparecer em 10 segundos!");
+                        arena.getPlayers().forEach(playerData -> {
+                            Player player = playerData.getPlayer();
+                            Location spawnLocation = arena.getSpawnLocation();
+                            if (player != null && player.isOnline()) {
+                                activePlayers.add(new TNTTagPlayer(player));
+                                // PREPARE PLAYER
+                                player.setGameMode(GameMode.ADVENTURE);
+                                player.getInventory().clear();
+
+                                String cmd = String.format(
+                                        "give %s white_wool[minecraft:can_place_on={}] 128",
+                                        player.getName());
+
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+
+                                ItemStack windCharge = new ItemStack(Material.WIND_CHARGE, 32);
+                                player.getInventory().addItem(windCharge);
+                                player.setHealth(player.getMaxHealth());
+                                player.setFoodLevel(20);
+                                player.teleport(spawnLocation);
+                                player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 9999999, 1));
+
+                            }
+                        });
                         new Countdown(10,
                                 sec -> arena.sendMessage("§eNova Batata Quente em " + sec + "s..."),
                                 TNTTagGame.this::pickRandomTagged).start();
@@ -162,6 +186,22 @@ public class TNTTagGame extends Game {
     public void onPlayerHit(Player damager, Player victim) {
 
         // Find the victim in our list of active TNTTagPlayers
+        TNTTagPlayer victimAsTNTTagPlayer = activePlayers.stream()
+                .filter(p -> p.getPlayer().getUniqueId().equals(victim.getUniqueId()))
+                .findFirst().orElse(null);
+
+        if (victimAsTNTTagPlayer != null && victimAsTNTTagPlayer != taggedPlayer) { // Cannot tag self
+            arena.sendMessage("§c" + victimAsTNTTagPlayer.getPlayer().getName() + " está com a Batata Quente!");
+            taggedPlayer.setTagged(false); // Untag the old player
+            victimAsTNTTagPlayer.setTagged(true); // Tag the new player
+            taggedPlayer = victimAsTNTTagPlayer; // Update who is currently tagged
+        } else if (victimAsTNTTagPlayer == taggedPlayer) {
+
+        } else {
+        }
+    }
+
+    public void OnTridentHit(Player damager, Player victim) {
         TNTTagPlayer victimAsTNTTagPlayer = activePlayers.stream()
                 .filter(p -> p.getPlayer().getUniqueId().equals(victim.getUniqueId()))
                 .findFirst().orElse(null);
